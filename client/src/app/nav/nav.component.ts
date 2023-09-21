@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { AccountService } from '../_services/account.service';
 import { User } from '../_models/user';
 import { Observable, of } from 'rxjs';
+import { Router } from '@angular/router';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'app-nav',
@@ -20,7 +22,7 @@ export class NavComponent implements OnInit{
 
   //We have got a bit of noise in our component and we can get around this by using the accountService directly inside our template. 
 
-  constructor(public accountService: AccountService) {}
+  constructor(public accountService: AccountService, private router: Router, private toastr: ToastrService) {}
 
   ngOnInit(): void {
     // this.getCurrentUser()
@@ -42,14 +44,16 @@ export class NavComponent implements OnInit{
     // console.log(this.model)
     this.accountService.login(this.model).subscribe({
       next: response => { //{} will allow us to put multiple statements inside what we want to do with this response
-        console.log(response)
+        // console.log(response)
+        this.router.navigateByUrl('/members')
         // this.loggedIn = true  //if there is a problem with the user loggedIn then we are going to do something with the error as well
       },
-      error: error => console.log(error)
+      error: error => this.toastr.error(error.error)
     })
   }
   logout() {
     this.accountService.logout()
+    this.router.navigateByUrl('/')
     // this.loggedIn = false
   }
 
